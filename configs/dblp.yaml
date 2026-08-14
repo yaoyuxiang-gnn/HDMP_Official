@@ -1,0 +1,28 @@
+# DBLP (HGB) 数据集配置
+dataset: dblp
+l_max: 5
+M: 32
+B: 8
+d: 128
+d_P: 128
+L_T: 2
+S: 8
+rho: 0.9
+lambda_s: 1.0e-4
+lambda_h1: 0.1
+lambda_h2: 0.025
+lambda_b: 0.0
+lr: 5.0e-4
+weight_decay: 1.0e-2
+encoder_lr_scale: 0.1
+grad_clip: 5.0
+t_warm: 20
+tau_init: 1.0
+tau_final: 0.1
+anneal_rate: 2.0e-2
+patience: 30
+epochs: 150
+fixed_epochs: true
+dropout: 0.5
+num_heads: 1
+seeds: [0, 1, 2, 3, 4]
