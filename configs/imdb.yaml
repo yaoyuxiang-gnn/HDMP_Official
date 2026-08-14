@@ -1,23 +1,22 @@
-# IMDB (HGB) 数据集配置（单层）
 dataset: imdb
-l_max: 5          # 最大元路径长度
-M: 32             # 级联粗筛保留候选数
-B: 8              # 目标选择预算
-d: 128            # 节点隐藏维度（提升容量）
-d_P: 128          # 元路径嵌入维度（提升容量）
-L_T: 2            # 语义编码 Transformer 层数
-S: 8              # 每条元路径采样实例数
-rho: 0.9          # top-ρ 分位数聚合
-lambda_s: 1.0e-4  # logits 尺度稳定正则权重
-lambda_h1: 0.1    # Δl=1 层次正则权重
-lambda_h2: 0.025  # Δl=2 层次正则权重
-lambda_b: 0.0     # budget 约束权重（默认关闭：稀疏选择由推理 top-B 实现，budget 会压垮门控）
+l_max: 5
+M: 32
+B: 8
+d: 128
+d_P: 128
+L_T: 2
+S: 8
+rho: 0.9
+lambda_s: 1.0e-4
+lambda_h1: 0.1
+lambda_h2: 0.025
+lambda_b: 0.0
 dropout: 0.5
 lr: 5.0e-4
 weight_decay: 1.0e-2
 encoder_lr_scale: 0.1
 grad_clip: 5.0
-t_warm: 20        # warm-up 轮数
+t_warm: 20
 tau_init: 1.0
 tau_final: 0.1
 anneal_rate: 2.0e-2

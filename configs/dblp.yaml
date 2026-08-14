@@ -1,4 +1,3 @@
-# DBLP (HGB) 数据集配置
 dataset: dblp
 l_max: 5
 M: 32

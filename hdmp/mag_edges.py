@@ -11,7 +11,6 @@ from .data import HetGraph
 
 def build_relation_csrs(graph: HetGraph) -> List[Tuple[np.ndarray, np.ndarray]]:
     """为 2*T_R 种关系（含逆关系）构建全局 id 空间的 CSR 邻接表。
-
     返回 [(indptr int64 [N+1], indices int32 [E_r])]，r >= T_R 为逆关系（转置）。
     """
     n = graph.num_nodes
@@ -32,7 +31,6 @@ def _hop(cur_s: np.ndarray, cur_n: np.ndarray, indptr: np.ndarray,
          indices: np.ndarray, fanout: int, rng: np.random.Generator,
          n_nodes: int) -> Tuple[np.ndarray, np.ndarray]:
     """frontier 推进一跳：每个当前节点有放回抽 fanout 个后继，按 (节点,后继) 去重。
-
     cur_s: [F] 起点局部 id；cur_n: [F] 当前节点全局 id。
     返回新的 (cur_s, cur_n)。有放回抽样 + 去重与均匀无放回近似一致，
     是邻居采样的标准工程做法（避免为 hub 节点物化全部邻居）。
@@ -61,13 +59,11 @@ def sampled_path_edges(graph: HetGraph, rel_seq, rel_csrs, fanout: int,
                        max_end_per_start: int = 64,
                        max_deg: int = 8) -> Tuple[np.ndarray, np.ndarray]:
     """单条元路径的采样复合邻接（CSR-by-dst）。
-
     rel_seq: 关系 id 序列（可含逆关系 id >= T_R）；语义与原版一致——从目标类型
     节点出发沿 rel_seq 到达元路径邻居（两端均为目标类型）。
     max_starts: 仅做存在性检查时限制起点数（None=全部目标节点）。
     max_end_per_start: 每个起点最多保留的终点数（防多跳 fanout^L 膨胀）。
     max_deg: 每个目标（dst）节点最多保留的元路径邻居数（train 语义上限）。
-
     返回 (indptr [N_t+1] int64, src [E] int64 全局 id)。
     """
     rng = np.random.default_rng(seed)

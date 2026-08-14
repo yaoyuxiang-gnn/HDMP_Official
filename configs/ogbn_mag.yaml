@@ -1,14 +1,12 @@
-# OGBN-MAG（大规模学术引用网络，1.9M 节点/736K paper/349类）配置
-# 大图可扩展性：向量化采样复合邻接（mag_edges）+ 目标节点 mini-batch 前向（train_mag）
 dataset: ogbn_mag
-l_max: 3            # 候选空间（4类节点/4种逻辑关系，schema 简单，重点是大图规模）
-M: 32               # 级联粗筛候选数
-B: 8                # 目标选择预算
+l_max: 3
+M: 32
+B: 8
 d: 128
 d_P: 128
 L_T: 2
-attn_dropout: 0.0   # MPS 后端 SDPA 不支持 dropout>0；MAG 在 MPS 训练，故置 0（CPU 小数据集不受影响）
-S: 4                # 每条元路径采样实例数
+attn_dropout: 0.0
+S: 4
 rho: 0.9
 lambda_s: 1.0e-4
 lambda_h1: 0.1
@@ -26,11 +24,10 @@ anneal_rate: 2.0e-2
 epochs: 150
 fixed_epochs: true
 num_heads: 1
-seeds: [0, 1, 2]    # 统一 3 seeds
-embed_dim: 64       # 非 paper 类型若无特征时的随机嵌入维度（metapath2vec 预处理下各类型均有 128 维特征）
-# 大图防 OOM 关键项（train_mag.py 使用）
-neighbor_fanout: 15  # 采样复合邻接逐跳扇出（替代全图稀疏连乘）
-max_deg: 8           # 每目标节点元路径邻居上限
-mb_targets: 16384    # 目标节点 mini-batch 大小
-inst_max_starts: 2000  # 实例采样起点扫描上限
-edge_cache_dir: "edge_cache"  # 候选边磁盘缓存（相对工作目录；避免写入软链的旧数据目录）
+seeds: [0, 1, 2]
+embed_dim: 64
+neighbor_fanout: 15
+max_deg: 8
+mb_targets: 16384
+inst_max_starts: 2000
+edge_cache_dir: "edge_cache"

@@ -1,4 +1,4 @@
-"""双层注意力模块（技术方案 §4）：节点级 GAT 聚合 + 元路径级注意力。
+"""双层注意力模块：节点级 GAT 聚合 + 元路径级注意力。
 
 不依赖 torch_scatter：用 scatter_reduce_ / index_add_ 实现边上 softmax 与聚合。
 复合邻接以 edge_index（目标类型局部 id 空间）形式预计算后传入。
@@ -14,7 +14,6 @@ import torch.nn.functional as F
 
 def edge_softmax(scores: torch.Tensor, dst: torch.Tensor, num_nodes: int) -> torch.Tensor:
     """对每条边的打分按目标节点分组做 softmax（数值稳定版）。
-
     scores: [E]；dst: [E] 每条边的目标节点 id。
     """
     max_per = torch.full((num_nodes,), float("-inf"), device=scores.device, dtype=scores.dtype)
@@ -26,16 +25,8 @@ def edge_softmax(scores: torch.Tensor, dst: torch.Tensor, num_nodes: int) -> tor
 
 
 class NodeLevelAttention(nn.Module):
-    """节点级注意力（§4.1）：对 M 条粗筛元路径批量执行 GAT 聚合。
-
-    参数按**路径身份（候选全集 K）索引**而非槽位：级联粗筛更新路径集合时，
-    已训练路径的参数得以保留，新入选路径从各自初始参数继续，避免错配重置。
-
-    多头支持（num_heads>1）：d 维拆成 H 个头，每个头独立做 GAT 打分与聚合，
-    输出拼接回 d 维。增强表示能力（HAN 用 8 头），尤其利于图语义弱、需深度
-    特征变换的数据集（如 IMDB）。heads=1 时退化为原始单头实现。
+    """节点级注意力：对 M 条粗筛元路径批量执行 GAT 聚合。
     """
-
     def __init__(self, K: int, d: int, negative_slope: float = 0.2, num_heads: int = 1):
         super().__init__()
         self.K, self.d, self.H = K, d, num_heads
@@ -53,12 +44,10 @@ class NodeLevelAttention(nn.Module):
     def forward(self, h_src: torch.Tensor, h_dst: torch.Tensor,
                 edge_indices: List[torch.Tensor], path_idx: torch.Tensor) -> torch.Tensor:
         """异构双分 GAT 聚合：源节点（任意类型，全局 id）→ 目标节点（目标类型，局部 id）。
-
         h_src: [N, d] 全部节点的表示（源侧，全局 id 空间）；
         h_dst: [N_t, d] 目标节点表示（目标侧，局部 id 空间）；
         edge_indices: 长度 M 的 [2, E_k] 列表，ei[0]=源（全局 id），ei[1]=目标（局部 id）；
         path_idx: [M] 每条粗筛路径在候选全集中的身份索引。
-
         返回 Z [N_t, M, d]：每条元路径下的目标节点表示（多头拼接回 d 维）。
         """
         M = path_idx.numel()
@@ -88,7 +77,6 @@ class NodeLevelAttention(nn.Module):
 
 class MetaPathLevelAttention(nn.Module):
     """元路径级注意力（§4.2，含语义闭环）：打分同时输入节点表示与元路径嵌入。"""
-
     def __init__(self, d: int, d_P: int):
         super().__init__()
         self.W_sem = nn.Linear(d + d_P, d)
@@ -96,7 +84,6 @@ class MetaPathLevelAttention(nn.Module):
 
     def forward(self, Z: torch.Tensor, e_tilde: torch.Tensor):
         """Z: [N_t, M, d]；e_tilde: [M, d_P]。
-
         返回 logits a [N_t, M] 与归一化权重 omega [N_t, M]。
         """
         M = Z.size(1)

@@ -1,9 +1,8 @@
-"""元路径语义编码模块（技术方案 §3）：Transformer 编码 + 实例上下文增强。"""
+"""元路径语义编码模块"""
 from __future__ import annotations
 
 import math
 from typing import List
-
 import torch
 import torch.nn as nn
 
@@ -20,11 +19,9 @@ def sinusoidal_pe(max_len: int, dim: int) -> torch.Tensor:
 
 class MetaPathEncoder(nn.Module):
     """将元路径 token 序列（含 CLS 位）编码为 d_P 维语义向量（§3.1）。
-
     输入张量约定：tokens [K, L]，第 0 位为 CLS（id = num_types），
     其余为类型 id；slot 标记 0=节点类型位、1=边类型位、2=CLS。
     """
-
     def __init__(self, num_node_types: int, num_edge_types: int, d_P: int,
                  L_T: int, max_len: int, n_heads: int = 4, attn_dropout: float = 0.1):
         super().__init__()

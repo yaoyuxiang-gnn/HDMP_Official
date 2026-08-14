@@ -1,4 +1,4 @@
-"""可微子集选择模块（技术方案 §5）：top-ρ 全局评分、Gumbel-Sigmoid 门控、
+"""可微子集选择模块：top-ρ 全局评分、Gumbel-Sigmoid 门控、
 Straight-Through 估计、温度退火与级联粗筛打分器。"""
 from __future__ import annotations
 
@@ -20,8 +20,7 @@ def top_rho_score(logits: torch.Tensor, rho: float) -> torch.Tensor:
 
 
 class GumbelGate(nn.Module):
-    """Gumbel-Sigmoid 可微门控（§5.2）。
-
+    """Gumbel-Sigmoid 可微门控
     噪声 ε = G0 - G1（G 为独立 Gumbel），即二元 Gumbel-Softmax 的等价形式。
     训练：软门控 → 退火 → ST 硬门控；推理：直接对全局评分取 top-B。
     """
@@ -36,7 +35,6 @@ class GumbelGate(nn.Module):
     def forward(self, g: torch.Tensor, step: int, training: bool,
                 frozen: bool = False, use_st: bool = False, warm_bias: float = 0.0):
         """返回 (z_used, z_soft)。
-
         frozen: warm-up 阶段固定为 1；use_st: 退火完成后启用 Straight-Through；
         warm_bias: 暖启动偏置，解冻初期为正值并线性衰减至 0，
         使门控从 warm-up 的 z≡1 平滑过渡到随机采样，避免突变崩溃。
@@ -61,7 +59,6 @@ class GumbelGate(nn.Module):
 
 class CascadeScorer(nn.Module):
     """级联粗筛打分器（§5.4）：仅用元路径嵌入与目标类型节点均值表示打分，无图计算。"""
-
     def __init__(self, d_P: int, d: int):
         super().__init__()
         self.mlp = nn.Sequential(
@@ -77,7 +74,6 @@ class CascadeScorer(nn.Module):
 
 def stratified_shortlist(rel_seqs, coverage: torch.Tensor, M: int, T_R: int = 4) -> torch.Tensor:
     """分层配额粗筛（方案 A）：按 hop 长度分层，每层按比例分配名额，层内按实例覆盖率排序。
-
     解决覆盖率启发式与元路径语义负相关的问题：短路径的复合邻接天然更稠密、
     覆盖率更高，纯覆盖率 top-M 会系统性筛掉所有长路径之外的短路径（含专家路径）。
     分层配额保证每个 hop 长度都有代表进入候选空间，让可微选择机制公平比较。

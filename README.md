@@ -31,7 +31,7 @@ python train.py --synthetic --epochs 30
 
 # 真实数据集（HGB：acm / dblp / imdb / freebase）
 python train.py --config configs/acm.yaml
-python analysis/evaluate.py --config configs/acm.yaml --checkpoint checkpoints/hdmp_acm_seed0.pt
+python evaluate.py --config configs/acm.yaml --checkpoint checkpoints/hdmp_acm_seed0.pt
 
 # 大图 OGBN-MAG（mini-batch，自动委托 train_mag）
 python train.py --config configs/ogbn_mag.yaml
