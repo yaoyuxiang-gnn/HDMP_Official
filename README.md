@@ -35,8 +35,4 @@ python analysis/evaluate.py --config configs/acm.yaml --checkpoint checkpoints/h
 
 # 大图 OGBN-MAG（mini-batch，自动委托 train_mag）
 python train.py --config configs/ogbn_mag.yaml
-
-# 基线对比（gcn/sage/gatv2/hgt/han/gtn/sehgnn/iehgc/diffmg + simplehgn）
-python run_baselines.py --dataset acm --device cuda
-python analysis/advanced_baselines.py --dataset acm --device cuda
 ```
